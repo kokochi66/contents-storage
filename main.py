@@ -21,7 +21,7 @@ class MainWindow(QMainWindow):
         btn5 = QPushButton("검색")
 
         self.addContentWindow = AddContentWindow()
-        btn6 = QPushButton("컨텐츠 추가")
+        btn6 = QPushButton("추가")
         btn6.clicked.connect(self.addContentWindow.show)
 
         layout.addWidget(btn1)
