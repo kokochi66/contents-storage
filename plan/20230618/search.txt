@@ -1,0 +1,53 @@
+다음은 이제 실제 검색을 하는 기능을 구현할 거야.
+검색에 필요한 구현은 다음과 같아.
+
+1. 검색을 하기 위한 Words를 만들거야. 이건 별도의 클래스 모델을 먼저 만들고, 또 따로 json 형식으로 저장하도록 할거야.
+이 때 저장 방식은 animation과 동일한 방식을 유지해줘. 다음 코드와 같아.
+
+
+```
+    def save_to_file(self):
+        # 파일 경로
+        file_path = os.path.join('data', 'animation_data.json')
+
+        data = {}  # data를 먼저 빈 딕셔너리로 초기화
+
+        # 파일이 존재하면 기존 데이터 로드
+        if os.path.exists(file_path):
+            try:
+                with open(file_path, 'r', encoding='utf-8') as file:
+                    data = json.load(file)
+            except json.JSONDecodeError:
+                # 파일 내용이 JSON 형식이 아닐 경우 빈 딕셔너리를 사용
+                pass
+
+        # animationList 키가 존재하는지 확인하고 없으면 새로 만듭니다.
+        if 'animationList' not in data:
+            data['animationList'] = []
+
+        # animationList에서 기존에 등록된 애니메이션 찾기
+        for i, animation in enumerate(data['animationList']):
+            if animation.get('title_origin', '') == self.title_origin:
+                # 이미 존재하는 애니메이션이면 업데이트
+                data['animationList'][i] = self.__dict__
+                break
+        else:
+            # 새로운 애니메이션이면 추가
+            data['animationList'].append(self.__dict__)
+
+        # 변경된 데이터를 다시 파일에 저장
+        with open(file_path, 'w', encoding='utf-8') as file:
+            json.dump(data, file, ensure_ascii=False, indent=4)
+
+        print(f"Saved animation '{self.title_origin}' to {file_path}")
+
+```
+이 코드와 동일하게, words 키워드 들을 저장하게 할건데, 중복되는 코드가 너무 많아지거나 최적화 할 수 있는 방안이 있다면 추가로 고려해줬으면 좋겠어.
+예를들어 어짜피 Words도 똑같이 word_data.json에다가 저장할건데, 겹치는 코드가 너무 많다면 이것을 dataservice.py 파일에다가 따로 사용해보는 방안을 고려해보고 있어.
+
+이 Word의 필드는 다음과 같아.
+- Key값 : 검색에 사용될 Key값이며, 실제로 데이터에 저장될 떄에도 이 데이터를 키값으로 저장할 데이터임.
+- data_name : 실제 데이터가 저장된 데이터 위치를 의미해. 여기서는 일단 animation 정보만 있다는 가정 하에, 애니메이션 정보라면 animation_data.json 이라는 파일명이 직접 들어갈거야.
+- data_value : 실제 데이터가 저장된 위치에서의 키값, 여기서는 animation_data.json에서 해당 데이터를 가져오기 위한 키값을 의미해. 애니메이션 같은 경우 title_origin이 키값이기 때문에 title_origin의 실제 값이 여기에 들어가게 될거야.
+
+이렇게 해서 특정 데이터를 조회할 수 있는 모델을 작성해줘.

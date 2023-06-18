@@ -1,3 +1,6 @@
+from model.data_service import DataService
+
+
 class Animation:
     def __init__(self, title_kr, title_origin, genre, director, airing_period, production_company):
         self.title_kr = title_kr
@@ -6,10 +9,7 @@ class Animation:
         self.director = director
         self.airing_period = airing_period
         self.production_company = production_company
-    def save_to_database(self):
-        # TODO: Save the animation data to the database
-        print("Saving animation data to the database...")
+        self.key = title_origin  # key 필드 추가
 
     def save_to_file(self):
-        # TODO: Save the animation data to a file
-        print("Saving animation data to a file...")
+        DataService.save_data('animation_data.json', self.__dict__)

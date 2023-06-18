@@ -1,0 +1,37 @@
+{
+    "t1": {
+        "key": "t1",
+        "data_name": "animation_data.json",
+        "data_value": "t"
+    },
+    "t2": {
+        "key": "t2",
+        "data_name": "animation_data.json",
+        "data_value": "t"
+    },
+    "t3": {
+        "key": "t3",
+        "data_name": "animation_data.json",
+        "data_value": "t"
+    },
+    "최애의아이": {
+        "key": "최애의아이",
+        "data_name": "animation_data.json",
+        "data_value": "【推しの子】"
+    },
+    "최애의 아이": {
+        "key": "최애의 아이",
+        "data_name": "animation_data.json",
+        "data_value": "【推しの子】"
+    },
+    "오시노코": {
+        "key": "오시노코",
+        "data_name": "animation_data.json",
+        "data_value": "【推しの子】"
+    },
+    "최애의아이 테스트": {
+        "key": "최애의아이 테스트",
+        "data_name": "animation_data.json",
+        "data_value": "【推しの子】"
+    }
+}

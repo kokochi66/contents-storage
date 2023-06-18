@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QHBoxLayout, QWidget
 from window.upload import UploadWindow
-from window.animation.add_animation import AddAnimationWindow
+from window.animation.edit_animation import EditAnimationWindow
 
 import sys
 
@@ -12,7 +12,7 @@ class AddContentWindow(QMainWindow):
 
         layout = QHBoxLayout()
 
-        self.add_animation_window = AddAnimationWindow()
+        self.add_animation_window = EditAnimationWindow()
         btn1 = QPushButton("애니메이션 추가")
         btn1.clicked.connect(self.add_animation_window.show)
 

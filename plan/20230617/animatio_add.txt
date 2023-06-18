@@ -1,0 +1,64 @@
+내 프로젝트는 애니메이션, 노래, 미연시에 대한 다양한 정보들을 입력하고, 이를 열람하고 순위를 매기는 등 다양한 기능들을 지원하는 프로그램이야.
+
+가장 중요한건 이 컨텐츠들을 일괄 검색하는 기능을 지원하려고 하는데, 이 데이터를 각각 json으로 애니메이션, 노래, 미연시 json 파일로 따로따로 저장한다고 했을 떄,
+통합 검색기능을 지원하려고 하는데, 검색 미리보기 기능으로 한글자씩 칠때마다 이 글자와 일치하는 데이터를 밑에 띄워줘야 하는데 이렇게 따로따로 저장하면 이런걸 보여주기가 굉장히 곤란하려나?
+
+=> 이슈없음
+
+오늘 해야할 일
+
+- 애니메이션 저장 폼 완성
+- 통합 검색기능 구현
+- 애니메이션 정보 보기/수정 페이지 추가
+- 각 애니메이션 데이터에 "키워드"를 생성하는 기능 추가
+- 키워드는 유니크하며, 특정 작품을 검색하기 위한 키워딩을 별도로 분리함
+- 검색을 통해 원하는 애니메이션을 조회하는 기능 추가
+
+
+
+```
+        # Set up animation form
+        self.title_kr_input = QLineEdit()
+        self.title_origin_input = QLineEdit()
+        self.genre_input = QLineEdit()
+        self.director_input = QLineEdit()
+        self.airing_period_input = QLineEdit()
+        self.production_company_input = QLineEdit()
+
+        self.animation_form.addRow("애니메이션 제목 (한글)", self.title_kr_input)
+        self.animation_form.addRow("애니메이션 제목 (원어)", self.title_origin_input)
+        self.animation_form.addRow("장르", self.genre_input)
+        self.animation_form.addRow("감독", self.director_input)
+        self.animation_form.addRow("방영기간", self.airing_period_input)
+        self.animation_form.addRow("제작사", self.production_company_input)
+
+```
+현재 이런식으로, PyQt5를 사용해서 파이썬으로 입력폼을 만들어 애니메이션 입력 폼을 만들어놨는데.
+여기서 추가적으로 필요한게 있어.
+일단 장르야. 장르는 물론 자유롭게 넣을 수 있지만, 이렇게 단순 String 형태로 저장되어서는 안돼.
+왜냐면 나중에 특정 장르로 애니메이션을 조회하거나 필터링 할 필요가 있을 수 있기 때문에, 장르 하나가 특별한 의미를 갖는 Enum으로써 미리 생성이 되어있어야해.
+그리고 애니메이션 추가할 때 들어가는 장르는 여러개가 들어갈 수 있으니까 이런 Enum 데이터가 List로 저장이 되어야하는거지.
+이는 방영기간도 마찬가지야. 예를들어 어떤 애니메이션 2023년 1분기에만 방영을 했을 수 있지만, 2023년 1분기부터 2023년 4분기까지 쭉 방영을 했을 수도 있고
+중간에 휴방을 하거나, 분할2쿨 같은 형태여서 2023년 1분기, 2023년 3분기 이렇게 두번 띄엄띄엄 방영을 했을 수 있을거야.
+그래서 나는 이 분기 자체도 전부 Enum으로 등록해놓고, 분기에 대한 정보를 EnumList로 저장이 되도록 하고싶어.
+
+이렇게 하려면 각각의 데이터는 어떤식으로 수정해야되며, 위의 입력폼은 어떻게 수정해야하는지. 그리고 Enum 데이터는 어떻게 작성해야하는지 예시를 들어줘.
+
+참고를 위해 내 Animation 저장을 위한 객체는 다음과 같아.
+```
+class Animation:
+    def __init__(self, title_kr, title_origin, genre, director, airing_period, production_company):
+        self.title_kr = title_kr
+        self.title_origin = title_origin
+        self.genre = genre
+        self.director = director
+        self.airing_period = airing_period
+        self.production_company = production_company
+    def save_to_database(self):
+        # TODO: Save the animation data to the database
+        print("Saving animation data to the database...")
+
+    def save_to_file(self):
+        # TODO: Save the animation data to a file
+        print("Saving animation data to a file...")
+```

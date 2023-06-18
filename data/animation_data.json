@@ -1,0 +1,31 @@
+{
+    "t": {
+        "title_kr": "t",
+        "title_origin": "t",
+        "genre": [
+            "액션"
+        ],
+        "director": "t1",
+        "airing_period": [
+            "2000-WINTER"
+        ],
+        "production_company": "t",
+        "key": "t"
+    },
+    "【推しの子】": {
+        "title_kr": "최애의 아이",
+        "title_origin": "【推しの子】",
+        "genre": [
+            "코미디",
+            "드라마",
+            "판타지",
+            "미스터리"
+        ],
+        "director": "히라마키 다이스케",
+        "airing_period": [
+            "2023-SPRING"
+        ],
+        "production_company": "동화공방",
+        "key": "【推しの子】"
+    }
+}
