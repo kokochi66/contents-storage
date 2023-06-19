@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, Qt
 from model.data_service import DataService
 from window.upload import UploadWindow
 from window.add_content import AddContentWindow
@@ -46,27 +46,40 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(container)
 
+        QApplication.instance().applicationStateChanged.connect(self.on_applicationStateChanged)
+
     def search(self):
         search_keyword = self.search_input.text()
 
         # 데이터 로드 코드 추가...
         word_data = DataService.load_data('word_data.json', search_keyword)
-
+        if not word_data:
+            msg = QMessageBox()
+            msg.setWindowTitle("검색 결과 없음")
+            msg.setText("검색어를 찾을 수 없습니다.")
+            msg.setIcon(QMessageBox.Information)
+            x = msg.exec_()
+            return
         # 검색을 수행한 후에 EditAnimationWindow를 연다고 가정
         # 여기서는 word_data에서 해당하는 데이터의 정보를 가져오고, 그 데이터의 정보를 기반으로 animation_data.json에서 실제 데이터를 가져오는 로직이 필요합니다.
         # 이 부분은 단순화하기 위해 간략하게 구현했습니다. 실제로는 에러 처리 등이 필요합니다.
         # word_data = words_data[search_keyword]
         animation_data = DataService.load_data(word_data['data_name'], word_data['data_value'])
+
+        # TODO 애니메이션 이외의 데이터가 나오면 여기서 예외처리가 필요함
         self.editAnimationWindow = EditAnimationWindow()
         self.editAnimationWindow.setData(animation_data)
         self.editAnimationWindow.show()
 
     def update_completer(self):
-        print('qt signal')
         word_keys = DataService.get_all_keys('word_data.json')
         self.completer = QCompleter(word_keys)  # 자동 완성 제안 단어
         self.completer.setMaxVisibleItems(10)
         self.search_input.setCompleter(self.completer)  # 자동 완성 기능을 QLineEdit에 연결
+
+    def on_applicationStateChanged(self, state):
+        if state == Qt.ApplicationActive:   # 어플리케이션이 활성화되었을 때
+            self.update_completer()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

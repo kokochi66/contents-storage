@@ -96,12 +96,22 @@ class EditAnimationWindow(QMainWindow):
         self.airing_word_list.setMaximumHeight(50)  # widget의 최대 높이를 설정합니다.
         self.animation_form.addRow("검색어", self.airing_word_list)
 
-        save_btn = QPushButton("저장")
-        save_btn.clicked.connect(self.save_animation)
-        self.animation_form.addRow(save_btn)
+        # 저장 및 삭제 버튼 추가
+        self.save_btn = QPushButton("저장")
+        self.save_btn.clicked.connect(self.save_animation)
+        self.delete_btn = QPushButton("삭제")
+        self.delete_btn.clicked.connect(self.delete_animation)  # delete_animation 메소드를 아래에서 정의
+        self.button_layout = QHBoxLayout()
+        self.button_layout.addWidget(self.save_btn)
+        self.button_layout.addWidget(self.delete_btn)
+        self.animation_form.addRow(self.button_layout)
 
         # Add animation form to the layout
         self.layout.addLayout(self.animation_form)
+
+        # 초기 상태에서는 삭제 버튼을 비활성화합니다.
+        self.delete_btn.setVisible(False)
+        self.edit_flag = False
 
 
     def save_animation(self):
@@ -109,6 +119,11 @@ class EditAnimationWindow(QMainWindow):
         title_origin = self.title_origin_input.text()
         genre = [self.airing_genre_list.item(i).text() for i in range(self.airing_genre_list.count())]
         director = self.director_input.text()
+
+        if DataService.is_key_exist('animation_data.json', title_origin) and not self.edit_flag:
+            QMessageBox.warning(self, "오류", "이미 존재하는 타이틀 입니다.")
+            return
+
 
         # 방영기간은 모든 항목을 리스트로 저장합니다.
         airing_period = [self.airing_period_list.item(i).text() for i in range(self.airing_period_list.count())]
@@ -127,9 +142,21 @@ class EditAnimationWindow(QMainWindow):
         # Save the animation data
         animation.save_to_file()
 
-        for i in range(self.airing_word_list.count()):
+        # Get the current list of words
+        current_words = [self.airing_word_list.item(i).text() for i in range(self.airing_word_list.count())]
+
+        # Load the existing words related to this animation
+        existing_words = DataService.get_all_data('word_data.json')
+        
+        word_data = DataService.get_all_data('word_data.json')
+        for key, word in word_data.items():
+            if word['data_value'] == self.animation_data['title_origin'] and word['key'] not in current_words:
+                DataService.delete_data('word_data.json', word['key'])
+
+        # Save the updated list of words
+        for word in current_words:
             word = Word(
-                self.airing_word_list.item(i).text(),
+                word,
                 "animation_data.json",
                 title_origin
             )
@@ -145,7 +172,9 @@ class EditAnimationWindow(QMainWindow):
 
     def setData(self, animation_data):
         self.title_kr_input.setText(animation_data['title_kr'])
+        self.title_kr_input.setEnabled(False)
         self.title_origin_input.setText(animation_data['title_origin'])
+        self.title_origin_input.setEnabled(False)
         self.director_input.setText(animation_data['director'])
         self.production_company_input.setText(animation_data['production_company'])
 
@@ -162,7 +191,11 @@ class EditAnimationWindow(QMainWindow):
             if word['data_value'] == animation_data['title_origin']:
                 self.airing_word_list.addItem(word['key'])
 
+        # 데이터가 설정된 경우에만 삭제 버튼을 활성화합니다.
+        self.delete_btn.setVisible(True)
 
+        self.animation_data = animation_data  # 삭제 시 사용하려고 저장해 둡니다.
+        self.edit_flag = True
 
     def add_period(self):
         year = self.year_input.currentText()
@@ -195,6 +228,7 @@ class EditAnimationWindow(QMainWindow):
     def delete_genre(self):
         for item in self.airing_genre_list.selectedItems():
             self.airing_genre_list.takeItem(self.airing_genre_list.row(item))
+
     def closeEvent(self, event):
         # 각 입력 필드를 초기화
         self.title_kr_input.clear()
@@ -205,6 +239,8 @@ class EditAnimationWindow(QMainWindow):
         # 장르와 방영기간 리스트를 초기화
         self.airing_genre_list.clear()
         self.airing_period_list.clear()
+
+        self.airing_word_list.clear()
 
         # 이벤트를 부모 클래스에게 전달하여 창을 닫음
         super().closeEvent(event)
@@ -217,9 +253,33 @@ class EditAnimationWindow(QMainWindow):
             if self.airing_word_list.item(i).text() == word:
                 QMessageBox.warning(self, "오류", "이미 추가된 검색어입니다.")
                 return
+
+        # JSON 파일에 키가 이미 존재하는지 확인
+        if DataService.is_key_exist('word_data.json', word):
+            QMessageBox.warning(self, "오류", "이미 존재하는 검색어입니다.")
+            return
+
         self.airing_word_list.addItem(word)
 
 
     def delete_word(self):
         for item in self.airing_word_list.selectedItems():
             self.airing_word_list.takeItem(self.airing_word_list.row(item))
+
+    def delete_animation(self):
+        # animation_data.json에서 해당 애니메이션 데이터 삭제
+        DataService.delete_data('animation_data.json', self.animation_data['title_origin'])
+
+        # word_data.json에서 해당 검색어 데이터 삭제
+        # 데이터 구조가 적절하다면, 단어 데이터를 한번에 가져와서 각각 삭제합니다.
+        word_data = DataService.get_all_data('word_data.json')
+        for key, word in word_data.items():
+            if word['data_value'] == self.animation_data['title_origin']:
+                DataService.delete_data('word_data.json', word['key'])
+
+        # 알림 창 띄우기
+        QMessageBox.information(self, "삭제 완료", "삭제가 완료되었습니다.")
+
+        # 데이터 변경 신호를 보내고 창 닫기
+        self.data_changed.emit()
+        self.close()

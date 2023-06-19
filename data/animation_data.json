@@ -1,17 +1,4 @@
 {
-    "t": {
-        "title_kr": "t",
-        "title_origin": "t",
-        "genre": [
-            "액션"
-        ],
-        "director": "t1",
-        "airing_period": [
-            "2000-WINTER"
-        ],
-        "production_company": "t",
-        "key": "t"
-    },
     "【推しの子】": {
         "title_kr": "최애의 아이",
         "title_origin": "【推しの子】",
@@ -27,5 +14,44 @@
         ],
         "production_company": "동화공방",
         "key": "【推しの子】"
+    },
+    "w": {
+        "title_kr": "w",
+        "title_origin": "w",
+        "genre": [
+            "액션"
+        ],
+        "director": "w",
+        "airing_period": [
+            "2000-WINTER"
+        ],
+        "production_company": "w",
+        "key": "w"
+    },
+    "aa": {
+        "title_kr": "aa",
+        "title_origin": "aa",
+        "genre": [
+            "액션"
+        ],
+        "director": "aa",
+        "airing_period": [
+            "2000-WINTER"
+        ],
+        "production_company": "aa",
+        "key": "aa"
+    },
+    "bb": {
+        "title_kr": "bb",
+        "title_origin": "bb",
+        "genre": [
+            "액션"
+        ],
+        "director": "bb",
+        "airing_period": [
+            "2000-WINTER"
+        ],
+        "production_company": "bb",
+        "key": "bb"
     }
 }

@@ -1,19 +1,4 @@
 {
-    "t1": {
-        "key": "t1",
-        "data_name": "animation_data.json",
-        "data_value": "t"
-    },
-    "t2": {
-        "key": "t2",
-        "data_name": "animation_data.json",
-        "data_value": "t"
-    },
-    "t3": {
-        "key": "t3",
-        "data_name": "animation_data.json",
-        "data_value": "t"
-    },
     "최애의아이": {
         "key": "최애의아이",
         "data_name": "animation_data.json",
@@ -29,9 +14,19 @@
         "data_name": "animation_data.json",
         "data_value": "【推しの子】"
     },
-    "최애의아이 테스트": {
-        "key": "최애의아이 테스트",
+    "w1": {
+        "key": "w1",
         "data_name": "animation_data.json",
-        "data_value": "【推しの子】"
+        "data_value": "w"
+    },
+    "a1": {
+        "key": "a1",
+        "data_name": "animation_data.json",
+        "data_value": "aa"
+    },
+    "b1": {
+        "key": "b1",
+        "data_name": "animation_data.json",
+        "data_value": "bb"
     }
 }

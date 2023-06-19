@@ -48,7 +48,7 @@ class DataService:
             del data[key]
 
         # Save the updated data back to the file
-        with open(file_name, 'w') as f:
+        with open(file_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False)
     @staticmethod
     def get_all_keys(file_name):
@@ -63,3 +63,10 @@ class DataService:
         with open(file_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
         return data
+    @staticmethod
+    def is_key_exist(file_name, key):
+        file_path = os.path.join('data', file_name)
+        with open(file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        return key in data
