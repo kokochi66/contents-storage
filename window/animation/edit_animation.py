@@ -31,6 +31,9 @@ class EditAnimationWindow(QMainWindow):
 
         # Set up animation form
         self.title_kr_input = QLineEdit()
+        
+        self.data_key = 0
+        
         self.animation_form.addRow("애니메이션 제목 (한글)", self.title_kr_input)
 
         self.title_origin_input = QLineEdit()
@@ -127,8 +130,8 @@ class EditAnimationWindow(QMainWindow):
 
         # 방영기간은 모든 항목을 리스트로 저장합니다.
         airing_period = [self.airing_period_list.item(i).text() for i in range(self.airing_period_list.count())]
-        
         production_company = self.production_company_input.text()
+        data_key = self.data_key
 
         animation = Animation(
             title_kr=title_kr,
@@ -136,7 +139,8 @@ class EditAnimationWindow(QMainWindow):
             genre=genre,
             director=director,
             airing_period=airing_period,
-            production_company=production_company
+            production_company=production_company,
+            key=data_key
         )
 
         # Save the animation data
@@ -171,6 +175,7 @@ class EditAnimationWindow(QMainWindow):
         self.close()
 
     def setData(self, animation_data):
+        self.data_key = animation_data['key']
         self.title_kr_input.setText(animation_data['title_kr'])
         self.title_kr_input.setEnabled(False)
         self.title_origin_input.setText(animation_data['title_origin'])
@@ -193,7 +198,7 @@ class EditAnimationWindow(QMainWindow):
 
         # 데이터가 설정된 경우에만 삭제 버튼을 활성화합니다.
         self.delete_btn.setVisible(True)
-
+        
         self.animation_data = animation_data  # 삭제 시 사용하려고 저장해 둡니다.
         self.edit_flag = True
 

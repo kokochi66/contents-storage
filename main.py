@@ -16,6 +16,8 @@ class MainWindow(QMainWindow):
 
         main_layout = QVBoxLayout()  # 메인 레이아웃을 QVBoxLayout로 변경
 
+
+        # 검색창
         search_layout = QHBoxLayout()  # 검색창에 대한 레이아웃 생성
 
         self.search_input = QLineEdit()
@@ -30,6 +32,8 @@ class MainWindow(QMainWindow):
 
         search_layout.addWidget(self.search_input)  # 검색창 레이아웃에 추가
         search_layout.addWidget(self.search_button)  # 검색창 레이아웃에 추가
+
+        
 
         self.addContentWindow = AddContentWindow()
         btn6 = QPushButton("추가")

@@ -7,7 +7,7 @@ class DataService:
         # 파일 경로
         file_path = os.path.join('data', file_name)
 
-        data = {}  # data를 먼저 빈 딕셔너리로 초기화
+        data = {'last_key': 1}  # data를 먼저 빈 딕셔너리로 초기화
 
         # 파일이 존재하면 기존 데이터 로드
         if os.path.exists(file_path):
@@ -17,6 +17,10 @@ class DataService:
             except json.JSONDecodeError:
                 # 파일 내용이 JSON 형식이 아닐 경우 빈 딕셔너리를 사용
                 pass
+
+        if item['key'] is None or item['key'] == 0:
+            item['key'] = data['last_key']
+            data['last_key'] = data['last_key'] + 1
 
         # 기존에 등록된 아이템이면 업데이트, 아니면 새로 추가
         data[item['key']] = item
