@@ -14,20 +14,19 @@
         "data_name": "animation_data.json",
         "data_value": "【推しの子】"
     },
-    "w1": {
-        "key": "w1",
-        "data_name": "animation_data.json",
-        "data_value": "w"
+    "이세돌": {
+        "key": "이세돌",
+        "data_name": "vocal_data.json",
+        "data_value": 3
     },
-    "a1": {
-        "key": "a1",
-        "data_name": "animation_data.json",
-        "data_value": "aa"
+    "이세계 아이돌": {
+        "key": "이세계 아이돌",
+        "data_name": "vocal_data.json",
+        "data_value": 3
     },
-    "b1": {
-        "key": "b1",
-        "data_name": "animation_data.json",
-        "data_value": "bb"
-    },
-    "last_key": 10
+    "이세계아이돌": {
+        "key": "이세계아이돌",
+        "data_name": "vocal_data.json",
+        "data_value": 3
+    }
 }

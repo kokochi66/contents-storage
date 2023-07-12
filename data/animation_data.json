@@ -14,58 +14,5 @@
         ],
         "production_company": "동화공방",
         "key": "【推しの子】"
-    },
-    "w": {
-        "title_kr": "w",
-        "title_origin": "w",
-        "genre": [
-            "액션"
-        ],
-        "director": "w",
-        "airing_period": [
-            "2000-WINTER"
-        ],
-        "production_company": "w",
-        "key": "w"
-    },
-    "aa": {
-        "title_kr": "aa",
-        "title_origin": "aa",
-        "genre": [
-            "액션"
-        ],
-        "director": "aa",
-        "airing_period": [
-            "2000-WINTER"
-        ],
-        "production_company": "aa",
-        "key": "aa"
-    },
-    "bb": {
-        "title_kr": "bb",
-        "title_origin": "bb",
-        "genre": [
-            "액션"
-        ],
-        "director": "bb",
-        "airing_period": [
-            "2000-WINTER"
-        ],
-        "production_company": "bb",
-        "key": "bb"
-    },
-    "last_key": 10,
-    "tes": {
-        "title_kr": "tes",
-        "title_origin": "tes",
-        "genre": [
-            "액션"
-        ],
-        "director": "tes",
-        "airing_period": [
-            "2000-WINTER"
-        ],
-        "production_company": "tse",
-        "key": "tes"
     }
 }

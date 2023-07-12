@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QHBoxLayout, QWidget
 from window.upload import UploadWindow
-from window.animation.edit_animation import EditAnimationWindow
-from window.song.edit_song import EditSongWindow
+from window.edit.edit_animation import EditAnimationWindow
+from window.edit.edit_song import EditSongWindow
+from window.edit.edit_vocal import EditVocalWindow
 
 import sys
 
@@ -14,19 +15,23 @@ class AddContentWindow(QMainWindow):
         layout = QHBoxLayout()
 
         self.add_animation_window = EditAnimationWindow()
-        btn1 = QPushButton("애니메이션 추가")
-        btn1.clicked.connect(self.add_animation_window.show)
+        animation_btn = QPushButton("애니메이션 추가")
+        animation_btn.clicked.connect(self.add_animation_window.show)
+        layout.addWidget(animation_btn)
 
-        self.add_vocal_window = EditSongWindow()
-        btn2 = QPushButton("노래 추가")
-        btn2.clicked.connect(self.add_vocal_window.show)
+        self.add_song_window = EditSongWindow()
+        song_btn = QPushButton("노래 추가")
+        song_btn.clicked.connect(self.add_song_window.show)
+        layout.addWidget(song_btn)
 
-        btn3 = QPushButton("미연시 추가")
-        btn3.clicked.connect(self.add_musical)
+        eroge_btn = QPushButton("미연시 추가")
+        eroge_btn.clicked.connect(self.add_musical)
+        layout.addWidget(eroge_btn)
 
-        layout.addWidget(btn1)
-        layout.addWidget(btn2)
-        layout.addWidget(btn3)
+        self.add_vcoal_window = EditVocalWindow()
+        vocal_btn = QPushButton("가수 추가")
+        vocal_btn.clicked.connect(self.add_vcoal_window.show)
+        layout.addWidget(vocal_btn)
 
         container = QWidget()
         container.setLayout(layout)

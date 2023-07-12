@@ -1,7 +1,8 @@
 from model.data_service import DataService
 
-
 class Vocal:
+    file_name = 'vocal_data.json'
+
     def __init__(self, name_kr, name_origin, debut_date, key):
         self.name_kr = name_kr                              # 가수 이름 한국어
         self.name_origin = name_origin                      # 가수 이름 원어
@@ -9,4 +10,4 @@ class Vocal:
         self.key = key
 
     def save_to_file(self):
-        DataService.save_data('vocal_data.json', self.__dict__)
+        DataService.save_data(Vocal.file_name, self.__dict__)

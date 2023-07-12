@@ -2,6 +2,8 @@ from model.data_service import DataService
 
 
 class Animation:
+    file_name = 'animation_data.json'
+
     def __init__(self, title_kr, title_origin, genre, director, airing_period, production_company, key):
         self.title_kr = title_kr
         self.title_origin = title_origin
@@ -12,4 +14,4 @@ class Animation:
         self.key = key  # key 필드 추가
 
     def save_to_file(self):
-        DataService.save_data('animation_data.json', self.__dict__)
+        DataService.save_data(Animation.file_name, self.__dict__)

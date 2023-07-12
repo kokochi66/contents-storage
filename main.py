@@ -1,9 +1,14 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import pyqtSignal, Qt
+from model.animation import Animation
 from model.data_service import DataService
+from model.song import Song
+from model.vocal import Vocal
 from window.upload import UploadWindow
 from window.add_content import AddContentWindow
-from window.animation.edit_animation import EditAnimationWindow
+from window.edit.edit_animation import EditAnimationWindow
+from window.edit.edit_song import EditSongWindow
+from window.edit.edit_vocal import EditVocalWindow
 import sys
 
 class MainWindow(QMainWindow):
@@ -64,16 +69,9 @@ class MainWindow(QMainWindow):
             msg.setIcon(QMessageBox.Information)
             x = msg.exec_()
             return
-        # 검색을 수행한 후에 EditAnimationWindow를 연다고 가정
-        # 여기서는 word_data에서 해당하는 데이터의 정보를 가져오고, 그 데이터의 정보를 기반으로 animation_data.json에서 실제 데이터를 가져오는 로직이 필요합니다.
-        # 이 부분은 단순화하기 위해 간략하게 구현했습니다. 실제로는 에러 처리 등이 필요합니다.
-        # word_data = words_data[search_keyword]
-        animation_data = DataService.load_data(word_data['data_name'], word_data['data_value'])
-
-        # TODO 애니메이션 이외의 데이터가 나오면 여기서 예외처리가 필요함
-        self.editAnimationWindow = EditAnimationWindow()
-        self.editAnimationWindow.setData(animation_data)
-        self.editAnimationWindow.show()
+        
+        data = DataService.load_data(word_data['data_name'], word_data['data_value'])
+        self.open_window(data, word_data['data_name'])
 
     def update_completer(self):
         word_keys = DataService.get_all_keys('word_data.json')
@@ -84,6 +82,20 @@ class MainWindow(QMainWindow):
     def on_applicationStateChanged(self, state):
         if state == Qt.ApplicationActive:   # 어플리케이션이 활성화되었을 때
             self.update_completer()
+
+    def open_window(self, data, data_name):
+        if data_name == Animation.file_name:
+            self.editWindow = EditAnimationWindow()
+            self.editWindow.setData(data)
+            self.editWindow.show()
+        elif data_name == Song.file_name:
+            self.editWindow = EditSongWindow()
+            self.editWindow.setData(data)
+            self.editWindow.show()
+        elif data_name == Vocal.file_name:
+            self.editWindow = EditVocalWindow()
+            self.editWindow.setData(data)
+            self.editWindow.show()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

@@ -1,8 +1,10 @@
 from msilib.schema import ComboBox
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget, QFormLayout, QLineEdit, QComboBox, QListWidget, QMessageBox, QHBoxLayout, QListWidgetItem, QCompleter
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget, QFormLayout, QLineEdit, QApplication, QListWidget, QMessageBox, QHBoxLayout, QListWidgetItem, QCompleter
 from PyQt5.QtCore import Qt, pyqtSignal
+from model.animation import Animation
 from model.song import Song
 from model.data_service import DataService
+from model.vocal import Vocal
 from model.word import Word
 from model.enum import Genre
 
@@ -62,6 +64,8 @@ class EditSongWindow(QMainWindow):
         self.vocal_list.setMaximumHeight(50)  # widget의 최대 높이를 설정합니다.
         self.song_form.addRow("가수", self.vocal_list)
 
+        QApplication.instance().applicationStateChanged.connect(self.on_applicationStateChanged)
+
         # 추가버튼을 누르면 가수가 추가됨 (일단 피쳐링 구분 없음)
 
         # 하이라이트 시간(s) : 초 기준으로 몇초~ 몇초까지
@@ -92,10 +96,8 @@ class EditSongWindow(QMainWindow):
         self.edit_flag = False
 
     def setData(self, song_data):
-        self.title_kr_input.setText(setData['title_kr'])
-        self.title_kr_input.setEnabled(False)
-        self.title_origin_input.setText(setData['title_origin'])
-        self.title_origin_input.setEnabled(False)
+        self.title_kr_input.setText(song_data['title_kr'])
+        self.title_origin_input.setText(song_data['title_origin'])
         # self.director_input.setText(animation_data['director'])
         # self.production_company_input.setText(animation_data['production_company'])
 
@@ -181,7 +183,7 @@ class EditSongWindow(QMainWindow):
         search_keyword = self.search_vocal_input.text()
 
         # 데이터 로드 코드 추가...
-        word_data = DataService.load_data('word_data.json', search_keyword)
+        word_data = DataService.load_data(Word.file_name, search_keyword)
         if not word_data:
             msg = QMessageBox()
             msg.setWindowTitle("검색 결과 없음")
@@ -204,7 +206,8 @@ class EditSongWindow(QMainWindow):
             self.vocal_list.takeItem(self.vocal_list.row(item))
 
     def update_completer(self):
-        word_data = DataService.get_all_data('word_data.json')
+        print('update_completer')
+        word_data = DataService.get_all_data(Word.file_name)
 
         # 가수 wordKey 리스트
         vocal_keys = []
@@ -213,12 +216,12 @@ class EditSongWindow(QMainWindow):
         # 현재는 카테고리는 애니메이션에 한정함
         category_key_map = {'animation': [],}
 
-        for word in word_data:
-            if word['data_name'] == 'animation_data.json':
-                category_key_map['animation'].insert(word['key'])
-            elif word['data_name'] == 'vocal_data.json':
-                vocal_keys.insert(word['key'])
-
+        for key, word in word_data.items():
+            print('word = ', word)
+            if str(word['data_name']) == str(Animation.file_name):
+                category_key_map['animation'].append(word['key'])
+            elif str(word['data_name']) == str(Vocal.file_name):
+                vocal_keys.append(word['key'])
 
         self.vocal_completer = QCompleter(vocal_keys)  # 자동 완성 제안 단어
         self.vocal_completer.setMaxVisibleItems(10)
@@ -227,6 +230,10 @@ class EditSongWindow(QMainWindow):
         # self.category_completer = QCompleter(vocal_keys)  # 자동 완성 제안 단어
         # self.category_completer.setMaxVisibleItems(10)
         # self.search_category_input.setCompleter(self.category_completer['animation'])  # 자동 완성 기능을 QLineEdit에 연결
+
+    def on_applicationStateChanged(self, state):
+        if state == Qt.ApplicationActive:   # 어플리케이션이 활성화되었을 때
+            self.update_completer()
 
     def closeEvent(self, event):
         # 각 입력 필드를 초기화

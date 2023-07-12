@@ -21,7 +21,7 @@ class EditAnimationWindow(QMainWindow):
         self.setCentralWidget(self.container)
 
         # Initialize animation form
-        self.animation_form = QFormLayout()
+        self.form = QFormLayout()
 
                 # Clear the existing layout
         while self.layout.count():
@@ -34,14 +34,14 @@ class EditAnimationWindow(QMainWindow):
         
         self.data_key = 0
         
-        self.animation_form.addRow("애니메이션 제목 (한글)", self.title_kr_input)
+        self.form.addRow("애니메이션 제목 (한글)", self.title_kr_input)
 
         self.title_origin_input = QLineEdit()
-        self.animation_form.addRow("애니메이션 제목 (원어)", self.title_origin_input)
+        self.form.addRow("애니메이션 제목 (원어)", self.title_origin_input)
 
         self.genre_input = QComboBox()
         self.genre_input.addItems([g.value for g in Genre])  # Genre Enum에 있는 모든 장르를 추가
-        self.animation_form.addRow("장르선택", self.genre_input)
+        self.form.addRow("장르선택", self.genre_input)
 
         self.add_genre_btn = QPushButton('장르추가')
         self.add_genre_btn.clicked.connect(self.add_genre)
@@ -50,19 +50,19 @@ class EditAnimationWindow(QMainWindow):
         self.genre_button_layout = QHBoxLayout()
         self.genre_button_layout.addWidget(self.add_genre_btn)
         self.genre_button_layout.addWidget(self.delete_genre_btn)
-        self.animation_form.addRow(self.genre_button_layout)
+        self.form.addRow(self.genre_button_layout)
 
         self.airing_genre_list = QListWidget()
         self.airing_genre_list.setMaximumHeight(50)  # widget의 최대 높이를 설정합니다.
-        self.animation_form.addRow("장르", self.airing_genre_list)
+        self.form.addRow("장르", self.airing_genre_list)
 
         self.year_input = QComboBox()
         self.year_input.addItems([str(year) for year in range(2000, 2024)])  # 2000년부터 2023년까지 추가   
-        self.animation_form.addRow("년도", self.year_input)
+        self.form.addRow("년도", self.year_input)
 
         self.quarter_input = QComboBox()
         self.quarter_input.addItems(["WINTER", "SPRING", "SUMMER", "FALL"])
-        self.animation_form.addRow("분기", self.quarter_input)
+        self.form.addRow("분기", self.quarter_input)
 
         self.add_period_btn = QPushButton('기간추가')
         self.add_period_btn.clicked.connect(self.add_period)
@@ -71,20 +71,22 @@ class EditAnimationWindow(QMainWindow):
         self.button_layout = QHBoxLayout()
         self.button_layout.addWidget(self.add_period_btn)
         self.button_layout.addWidget(self.delete_period_btn)
-        self.animation_form.addRow(self.button_layout)
+        self.form.addRow(self.button_layout)
 
         self.airing_period_list = QListWidget()
         self.airing_period_list.setMaximumHeight(50)  # widget의 최대 높이를 설정합니다.
-        self.animation_form.addRow("방영기간", self.airing_period_list)
+        self.form.addRow("방영기간", self.airing_period_list)
 
         self.director_input = QLineEdit()
-        self.animation_form.addRow("감독", self.director_input)
+        self.form.addRow("감독", self.director_input)
                
         self.production_company_input = QLineEdit()
-        self.animation_form.addRow("제작사", self.production_company_input)
+        self.form.addRow("제작사", self.production_company_input)
 
+        
+        # 검색어 입력 폼
         self.word_input = QLineEdit()
-        self.animation_form.addRow("검색어 키", self.word_input)
+        self.form.addRow("검색어 키", self.word_input)
 
         self.add_word_btn = QPushButton('검색어 추가')
         self.add_word_btn.clicked.connect(self.add_word)
@@ -93,11 +95,11 @@ class EditAnimationWindow(QMainWindow):
         self.word_button_layout = QHBoxLayout()
         self.word_button_layout.addWidget(self.add_word_btn)
         self.word_button_layout.addWidget(self.delete_word_btn)
-        self.animation_form.addRow(self.word_button_layout)
+        self.form.addRow(self.word_button_layout)
 
         self.airing_word_list = QListWidget()
         self.airing_word_list.setMaximumHeight(50)  # widget의 최대 높이를 설정합니다.
-        self.animation_form.addRow("검색어", self.airing_word_list)
+        self.form.addRow("검색어", self.airing_word_list)
 
         # 저장 및 삭제 버튼 추가
         self.save_btn = QPushButton("저장")
@@ -107,10 +109,10 @@ class EditAnimationWindow(QMainWindow):
         self.button_layout = QHBoxLayout()
         self.button_layout.addWidget(self.save_btn)
         self.button_layout.addWidget(self.delete_btn)
-        self.animation_form.addRow(self.button_layout)
+        self.form.addRow(self.button_layout)
 
         # Add animation form to the layout
-        self.layout.addLayout(self.animation_form)
+        self.layout.addLayout(self.form)
 
         # 초기 상태에서는 삭제 버튼을 비활성화합니다.
         self.delete_btn.setVisible(False)
@@ -154,7 +156,7 @@ class EditAnimationWindow(QMainWindow):
         
         word_data = DataService.get_all_data('word_data.json')
         for key, word in word_data.items():
-            if word['data_value'] == self.animation_data['title_origin'] and word['key'] not in current_words:
+            if str(word['data_value']) == str(animation.key) and str(word['key']) not in current_words:
                 DataService.delete_data('word_data.json', word['key'])
 
         # Save the updated list of words
@@ -162,7 +164,7 @@ class EditAnimationWindow(QMainWindow):
             word = Word(
                 word,
                 "animation_data.json",
-                title_origin
+                animation.key
             )
             word.save_to_file()
             
@@ -193,7 +195,7 @@ class EditAnimationWindow(QMainWindow):
         # Word 데이터에서 해당 애니메이션에 해당하는 검색어 리스트를 가져와서 airing_word_list에 추가
         word_data = DataService.get_all_data('word_data.json')
         for key, word in word_data.items():
-            if word['data_value'] == animation_data['title_origin']:
+            if word['data_value'] == animation_data['key']:
                 self.airing_word_list.addItem(word['key'])
 
         # 데이터가 설정된 경우에만 삭제 버튼을 활성화합니다.
@@ -273,13 +275,13 @@ class EditAnimationWindow(QMainWindow):
 
     def delete_animation(self):
         # animation_data.json에서 해당 애니메이션 데이터 삭제
-        DataService.delete_data('animation_data.json', self.animation_data['title_origin'])
+        DataService.delete_data('animation_data.json', self.animation_data['key'])
 
         # word_data.json에서 해당 검색어 데이터 삭제
         # 데이터 구조가 적절하다면, 단어 데이터를 한번에 가져와서 각각 삭제합니다.
         word_data = DataService.get_all_data('word_data.json')
         for key, word in word_data.items():
-            if word['data_value'] == self.animation_data['title_origin']:
+            if word['data_value'] == self.animation_data['key']:
                 DataService.delete_data('word_data.json', word['key'])
 
         # 알림 창 띄우기
