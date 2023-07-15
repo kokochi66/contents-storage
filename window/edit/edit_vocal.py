@@ -2,7 +2,7 @@ from msilib.schema import ComboBox
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget, QFormLayout, QLineEdit, QListWidget, QMessageBox, QHBoxLayout, QListWidgetItem, QCompleter, QDateEdit
 from PyQt5.QtCore import Qt, pyqtSignal, QDate
 from model.song import Song
-from model.data_service import DataService
+from model.service.data_service import DataService
 from model.vocal import Vocal
 from model.word import Word
 from model.enum import Genre

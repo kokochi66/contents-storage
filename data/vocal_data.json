@@ -1,20 +1,14 @@
 {
-    "2": {
-        "name_kr": "이세계 아이돌",
-        "name_origin": "이세계 아이돌",
-        "debut_date": "2000-01-01",
-        "key": 2
-    },
-    "3": {
-        "name_kr": "이세계 아이돌",
-        "name_origin": "이세계 아이돌",
-        "debut_date": "2021-12-18",
-        "key": 3
-    },
     "3": {
         "name_kr": "이세계 아이돌",
         "name_origin": "이세계 아이돌",
         "debut_date": "2021-12-17",
         "key": 3
+    },
+    "4": {
+        "name_kr": "yozuca*",
+        "name_origin": "yozuca*",
+        "debut_date": "2002-08-22",
+        "key": 4
     }
 }

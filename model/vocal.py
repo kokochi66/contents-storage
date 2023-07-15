@@ -1,4 +1,4 @@
-from model.data_service import DataService
+from model.service.data_service import DataService
 
 class Vocal:
     file_name = 'vocal_data.json'

@@ -2,7 +2,7 @@ from msilib.schema import ComboBox
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget, QFormLayout, QLineEdit, QComboBox, QListWidget, QMessageBox, QHBoxLayout, QListWidgetItem
 from PyQt5.QtCore import Qt, pyqtSignal
 from model.animation import Animation
-from model.data_service import DataService
+from model.service.data_service import DataService
 from model.word import Word
 from model.enum import Genre
 

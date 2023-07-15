@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import pyqtSignal, Qt
 from model.animation import Animation
-from model.data_service import DataService
+from model.service.data_service import DataService
 from model.song import Song
 from model.vocal import Vocal
 from window.upload import UploadWindow
@@ -10,9 +10,11 @@ from window.edit.edit_animation import EditAnimationWindow
 from window.edit.edit_song import EditSongWindow
 from window.edit.edit_vocal import EditVocalWindow
 import sys
+import os
 
 class MainWindow(QMainWindow):
     data_changed = pyqtSignal()
+    root = os.path.dirname(os.path.abspath(__file__))
 
     def __init__(self):
         super().__init__()

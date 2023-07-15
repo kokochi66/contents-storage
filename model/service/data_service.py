@@ -1,5 +1,6 @@
 import os
 import json
+import time
 
 class DataService:
     @staticmethod
@@ -100,3 +101,21 @@ class DataService:
             data = json.load(f)
 
         return key in data
+    @staticmethod
+    def rename_file(file_path, file_title):
+    # 기존의 파일 경로에서 확장자를 분리합니다.
+        file_dir, file_name = os.path.split(file_path)
+        file_base, file_ext = os.path.splitext(file_name)
+
+        # 새로운 이름을 만듭니다.
+        # 이때 현재 시간을 밀리초로 변환하여 사용합니다.
+        timestamp = int(time.time() * 1000)
+        new_name = f"{file_title}_{timestamp}{file_ext}"
+
+        # 새로운 파일 경로를 만듭니다.
+        new_path = os.path.join(file_dir, new_name)
+
+        # 파일 이름을 변경합니다.
+        os.rename(file_path, new_path)
+
+        return new_path
