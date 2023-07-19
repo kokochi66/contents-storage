@@ -119,3 +119,8 @@ class DataService:
         os.rename(file_path, new_path)
 
         return new_path
+    @staticmethod
+    def get_file_name(class_name):
+        if class_name == "None":
+            return "None"
+        return class_name.lower() + '_data.json'

@@ -2,7 +2,7 @@ import os
 import shutil
 from msilib.schema import ComboBox
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal, QDate
 from model.animation import Animation
 from model.song import Song
 from model.service.data_service import DataService
@@ -14,7 +14,10 @@ from datetime import datetime
 from property import Property
 
 class EditSongWindow(QMainWindow):
+
     data_changed = pyqtSignal()
+    CATEGORY_NAMES = ['None', 'Animation']
+
     def __init__(self):
         super().__init__()
 
@@ -83,7 +86,7 @@ class EditSongWindow(QMainWindow):
 
         # Category name 입력
         self.category_name_input = QComboBox()
-        self.category_name_input.addItems(['None', 'Animation'])  # 범주 추가
+        self.category_name_input.addItems(self.CATEGORY_NAMES)  # 범주 추가
         self.category_name_input.currentTextChanged.connect(self.on_category_changed)
         self.form.addRow("카테고리 범주", self.category_name_input)
 
@@ -170,14 +173,17 @@ class EditSongWindow(QMainWindow):
         highlight_end = self.highlight_end_input.value() # QSpinBox에서 value() 함수를 이용하여 값을 꺼냅니다.
 
         category_name = self.category_name_input.currentText() # QComboBox에서 currentText() 함수를 이용하여 현재 선택된 텍스트를 꺼냅니다.
-        
+        category_file_name = DataService.get_file_name(category_name) # 카테고리 이름을 파일 이름으로 변환
+
         # QListWidget에서 선택된 카테고리의 key 값을 얻습니다.
         category_keys = [self.category_list.item(i).data(Qt.UserRole) for i in range(self.category_list.count())]
 
         release_date = self.release_date_input.date().toString(Qt.ISODate) # QDateEdit에서 date() 함수를 이용하여 QDate를 가져오고, toString() 함수를 이용하여 문자열로 변환합니다.
 
         file_path = self.file_path_input.text()
-        file_path = DataService.rename_file(file_path, title_kr)
+        file_name = os.path.basename(file_path)  # 파일 경로에서 파일 이름만 추출
+        if not self.is_valid_file_name(file_name, title_kr):
+            file_path = DataService.rename_file(file_path, title_kr)
     
         data_key = self.data_key
 
@@ -187,7 +193,7 @@ class EditSongWindow(QMainWindow):
             vocal_keys=vocal_keys,
             highlight_start=highlight_start,
             highlight_end=highlight_end,
-            category_name=category_name,
+            category_name=category_file_name,
             category_keys=category_keys,
             release_date=release_date,
             file_path=file_path,
@@ -240,28 +246,42 @@ class EditSongWindow(QMainWindow):
         self.close()
 
     def setData(self, song_data):
+        # 기본적인 데이터 설정
+        self.data_key = song_data['key']
         self.title_kr_input.setText(song_data['title_kr'])
         self.title_origin_input.setText(song_data['title_origin'])
-        # self.director_input.setText(animation_data['director'])
-        # self.production_company_input.setText(animation_data['production_company'])
+        self.highlight_start_input.setValue(song_data['highlight_start'])
+        self.highlight_end_input.setValue(song_data['highlight_end'])
+        self.release_date_input.setDate(QDate.fromString(song_data['release_date'], 'yyyy-MM-dd'))
+        self.file_path_input.setText(song_data['file_path'])
 
-        # # 장르와 방영기간, 검색어는 리스트 형태로 저장되어 있으므로, 각각의 요소를 리스트 위젯에 추가해주는 작업이 필요합니다.
-        # for genre in animation_data['genre']:
-        #     self.airing_genre_list.addItem(genre)
-        
-        # for period in animation_data['airing_period']:
-        #     self.airing_period_list.addItem(period)
+        # 가수 정보를 설정
+        vocal_data = DataService.get_all_data(Vocal.file_name)  # 해당 경로에 vocal 데이터가 저장되어 있다고 가정합니다.
+        for key in song_data['vocal_keys']:
+            key_str = str(key)  # 키를 문자열로 변환
+            if key_str in vocal_data:
+                item = QListWidgetItem(vocal_data[key_str]['name_kr'])  # 'name_kr' 사용
+                item.setData(Qt.UserRole, key)
+                self.vocal_list.addItem(item)
 
-        # # Word 데이터에서 해당 애니메이션에 해당하는 검색어 리스트를 가져와서 airing_word_list에 추가
-        # word_data = DataService.get_all_data('word_data.json')
-        # for key, word in word_data.items():
-        #     if word['data_value'] == animation_data['title_origin']:
-        #         self.airing_word_list.addItem(word['key'])
+        # 카테고리 설정
+        self.category_name_input.setCurrentText(song_data['category_name'])
+        if song_data['category_name'] != "None":
+            file_name = song_data['category_name']  # category_name 자체가 파일 이름입니다.
+            category_data = DataService.get_all_data(file_name)
+            for key in song_data['category_keys']:
+                if key in category_data:
+                    self.category_list.addItem(category_data[key]['name'])  # 가정: category_data에는 'name'이라는 키가 카테고리 이름을 나타냅니다.
 
-        # # 데이터가 설정된 경우에만 삭제 버튼을 활성화합니다.
-        # self.delete_btn.setVisible(True)
+        # 검색어 설정
+        word_data = DataService.get_all_data('word_data.json')
+        for key, word in word_data.items():
+            if word['data_value'] == song_data['key']:
+                self.word_list.addItem(word['key'])
 
-        # self.animation_data = animation_data  # 삭제 시 사용하려고 저장해 둡니다.
+        # 데이터가 설정된 경우 삭제 버튼을 활성화
+        self.delete_btn.setVisible(True)
+        self.song_data = song_data  # 삭제 시 사용하려고 저장해 둡니다.
         self.edit_flag = True
 
         # 검색 데이터를 세팅하는 update_completer 실행
@@ -310,9 +330,11 @@ class EditSongWindow(QMainWindow):
 
         for key, word in word_data.items():
             data_name = str(word['data_name'])
-            if str(word['data_name']) == str(Animation.file_name):
-                self.category_key_map['Animation'].append(word['key'])
-            elif str(word['data_name']) == str(Vocal.file_name):
+            if data_name != DataService.get_file_name('None'):
+                for category_name in self.CATEGORY_NAMES:
+                    if category_name != 'None' and data_name == DataService.get_file_name(category_name):
+                        self.category_key_map[category_name].append(word['key'])
+            elif data_name == DataService.get_file_name('Vocal'):
                 vocal_keys.append(word['key'])
 
         self.vocal_completer = QCompleter(vocal_keys)  # 자동 완성 제안 단어
@@ -327,8 +349,6 @@ class EditSongWindow(QMainWindow):
         self.category_list.clear()
 
     def set_autocompletion_data(self, category):
-        print("cateogry_key_map = ", self.cateogry_key_map)
-        print("category = ", category)
         # 선택된 카테고리에 따라 자동 완성 데이터를 설정합니다.
         if category in self.category_key_map:
             self.category_completer = QCompleter(self.category_key_map[category])
@@ -359,7 +379,6 @@ class EditSongWindow(QMainWindow):
                 return
 
         # 새 아이템 생성 및 사용자 데이터 설정
-        print("category_data = ", category_data)
         item = QListWidgetItem(category_data['title_kr'])
         item.setData(Qt.UserRole, category_data['key'])
 
@@ -441,3 +460,19 @@ class EditSongWindow(QMainWindow):
 
         # 이벤트를 부모 클래스에게 전달하여 창을 닫음
         super().closeEvent(event)
+    def is_valid_file_name(self, file_name, title_kr):
+        # 파일 이름과 확장자 분리
+        base_name, ext = os.path.splitext(file_name)
+
+        # 파일 이름이 title_kr로 시작하는지 확인
+        if not base_name.startswith(title_kr):
+            return False
+
+        # title_kr 다음의 문자열 추출
+        remaining_part = base_name[len(title_kr):]
+
+        # remaining_part가 _millis 형태인지 확인
+        if not remaining_part.startswith("_") or not remaining_part[1:].isdigit():
+            return False
+
+        return True

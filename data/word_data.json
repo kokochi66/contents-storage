@@ -14,24 +14,19 @@
         "data_name": "animation_data.json",
         "data_value": "【推しの子】"
     },
-    "yozuca*": {
-        "key": "yozuca*",
-        "data_name": "vocal_data.json",
-        "data_value": 4
-    },
-    "yozuca": {
-        "key": "yozuca",
-        "data_name": "vocal_data.json",
-        "data_value": 4
-    },
-    "요즈카": {
-        "key": "요즈카",
-        "data_name": "vocal_data.json",
-        "data_value": 4
-    },
     "램브란트의빛": {
         "key": "램브란트의빛",
         "data_name": "song_data.json",
-        "data_value": 3
+        "data_value": 8
+    },
+    "이세돌": {
+        "key": "이세돌",
+        "data_name": "vocal_data.json",
+        "data_value": 5
+    },
+    "이세계 아이돌": {
+        "key": "이세계 아이돌",
+        "data_name": "vocal_data.json",
+        "data_value": 5
     }
 }
